@@ -7,7 +7,6 @@ for x in range(1, n + 1):
         print(z, end="")
     print()
 #part b
-
 n = [1, 3, 5, 6, 7]
 a = 0
 while a < 5:  
