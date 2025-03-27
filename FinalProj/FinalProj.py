@@ -1,6 +1,6 @@
 import sqlite3
 import tkinter as tk
-from tkinter import messagebox, simpledialog
+from tkinter import ttk, messagebox, simpledialog
 
 # Database setup
 def init_db():
@@ -60,64 +60,55 @@ def sign_up():
 
     signup_window = tk.Toplevel(root)
     signup_window.title("Sign Up")
-
-    tk.Label(signup_window, text="First Name:").grid(row=0, column=0)
-    first_name = tk.Entry(signup_window)
-    first_name.grid(row=0, column=1)
+    signup_window.geometry("400x450")
     
-    tk.Label(signup_window, text="Middle Name:").grid(row=1, column=0)
-    middle_name = tk.Entry(signup_window)
-    middle_name.grid(row=1, column=1)
+    ttk.Label(signup_window, text="First Name:").pack(pady=2)
+    first_name = ttk.Entry(signup_window)
+    first_name.pack(pady=2)
     
-    tk.Label(signup_window, text="Last Name:").grid(row=2, column=0)
-    last_name = tk.Entry(signup_window)
-    last_name.grid(row=2, column=1)
+    ttk.Label(signup_window, text="Middle Name:").pack(pady=2)
+    middle_name = ttk.Entry(signup_window)
+    middle_name.pack(pady=2)
     
-    tk.Label(signup_window, text="Birthday (YYYY-MM-DD):").grid(row=3, column=0)
-    birth_date = tk.Entry(signup_window)
-    birth_date.grid(row=3, column=1)
+    ttk.Label(signup_window, text="Last Name:").pack(pady=2)
+    last_name = ttk.Entry(signup_window)
+    last_name.pack(pady=2)
     
-    tk.Label(signup_window, text="Gender:").grid(row=4, column=0)
+    ttk.Label(signup_window, text="Birthday (YYYY-MM-DD):").pack(pady=2)
+    birth_date = ttk.Entry(signup_window)
+    birth_date.pack(pady=2)
+    
+    ttk.Label(signup_window, text="Gender:").pack(pady=2)
     gender_var = tk.StringVar(value="Other")
-    tk.OptionMenu(signup_window, gender_var, "Male", "Female", "Other").grid(row=4, column=1)
+    gender_menu = ttk.Combobox(signup_window, textvariable=gender_var, values=("Male", "Female", "Other"))
+    gender_menu.pack(pady=2)
     
-    tk.Label(signup_window, text="Username:").grid(row=5, column=0)
-    user_name = tk.Entry(signup_window)
-    user_name.grid(row=5, column=1)
+    ttk.Label(signup_window, text="Username:").pack(pady=2)
+    user_name = ttk.Entry(signup_window)
+    user_name.pack(pady=2)
     
-    tk.Label(signup_window, text="Password:").grid(row=6, column=0)
-    pass_word = tk.Entry(signup_window, show="*")
-    pass_word.grid(row=6, column=1)
+    ttk.Label(signup_window, text="Password:").pack(pady=2)
+    pass_word = ttk.Entry(signup_window, show="*")
+    pass_word.pack(pady=2)
     
-    tk.Button(signup_window, text="Sign Up", command=save_user).grid(row=7, columnspan=2)
+    ttk.Button(signup_window, text="Sign Up", command=save_user).pack(pady=10)
 
 # Login function
 def login():
     username = simpledialog.askstring("Login", "Enter Username:")
     password = simpledialog.askstring("Login", "Enter Password:", show="*")
+    
     conn = sqlite3.connect("password_manager.db")
     cursor = conn.cursor()
     cursor.execute("SELECT id FROM users WHERE username = ? AND password = ?", (username, password))
     user = cursor.fetchone()
     conn.close()
+    
     if user:
         messagebox.showinfo("Success", "Login successful!")
         open_main_menu(user[0])
     else:
         messagebox.showerror("Error", "Invalid credentials!")
-
-# Main menu
-def open_main_menu(user_id):
-    menu_window = tk.Toplevel(root)
-    menu_window.title("Password Manager")
-    
-    tk.Button(menu_window, text="Add Password", command=lambda: add_password(user_id)).pack()
-    tk.Button(menu_window, text="View All Passwords", command=lambda: view_passwords(user_id)).pack()
-    tk.Button(menu_window, text="Search Password", command=lambda: search_password(user_id)).pack()
-    tk.Button(menu_window, text="Edit Password", command=lambda: edit_password(user_id)).pack()
-    tk.Button(menu_window, text="Delete Password", command=lambda: delete_password(user_id)).pack()
-    tk.Button(menu_window, text="Exit", command=menu_window.destroy).pack()
-
 # Adding a new password
 def add_password(user_id):
     site = simpledialog.askstring("Add Password", "Enter Website:")
@@ -206,13 +197,29 @@ def delete_password(user_id):
     
     conn.close()
 
+# Main menu
+def open_main_menu(user_id):
+    menu_window = tk.Toplevel(root)
+    menu_window.title("Password Manager")
+    menu_window.geometry("400x400")
+    
+    ttk.Label(menu_window, text="Password Manager", font=("Arial", 14, "bold")).pack(pady=10)
+    ttk.Button(menu_window, text="Add Password", command=lambda: add_password(user_id)).pack(pady=5)
+    ttk.Button(menu_window, text="View All Passwords", command=lambda: view_passwords(user_id)).pack(pady=5)
+    ttk.Button(menu_window, text="Search Password", command=lambda: search_password(user_id)).pack(pady=5)
+    ttk.Button(menu_window, text="Edit Password", command=lambda: edit_password(user_id)).pack(pady=5)
+    ttk.Button(menu_window, text="Delete Password", command=lambda: delete_password(user_id)).pack(pady=5)
+    ttk.Button(menu_window, text="Exit", command=menu_window.destroy).pack(pady=10)
+
 # GUI setup
 root = tk.Tk()
 root.title("Password Manager")
+root.geometry("400x300")
 
-tk.Button(root, text="Login", command=login).pack()
-tk.Button(root, text="Sign Up", command=sign_up).pack()
-tk.Button(root, text="Exit", command=root.quit).pack()
+ttk.Label(root, text="Welcome to Password Manager", font=("Arial", 12, "bold")).pack(pady=10)
+ttk.Button(root, text="Login", command=login).pack(pady=5)
+ttk.Button(root, text="Sign Up", command=sign_up).pack(pady=5)
+ttk.Button(root, text="Exit", command=root.quit).pack(pady=10)
 
 init_db()
 root.mainloop()
